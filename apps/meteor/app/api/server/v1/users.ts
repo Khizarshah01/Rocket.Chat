@@ -171,12 +171,22 @@ API.v1.addRoute(
 			}
 
 			// saveUserProfile now uses the default two factor authentication procedures, so we need to provide that
-			const twoFactorOptions = !userData.typedPassword
-				? null
-				: {
-						twoFactorCode: userData.typedPassword,
-						twoFactorMethod: 'password',
-					};
+			let twoFactorOptions: { twoFactorCode: string; twoFactorMethod: string } | null = null;
+
+			const headerCode = this.request?.headers?.get('x-2fa-code');
+			const headerMethod = this.request?.headers?.get('x-2fa-method') || 'password';
+
+			if (headerCode) {
+				twoFactorOptions = {
+					twoFactorCode: headerCode,
+					twoFactorMethod: headerMethod,
+				};
+			} else if (userData.typedPassword) {
+				twoFactorOptions = {
+					twoFactorCode: userData.typedPassword,
+					twoFactorMethod: 'password',
+				};
+			}
 
 			await executeSaveUserProfile.call(
 				this as unknown as Meteor.MethodThisType,
