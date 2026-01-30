@@ -15,8 +15,8 @@ const AddLinkComposerActionModal = ({ selectedText, onClose, onConfirm }: AddLin
 	const textField = useId();
 	const urlField = useId();
 
-	const { handleSubmit, setFocus, control } = useForm({
-		mode: 'onBlur',
+	const { handleSubmit, setFocus, control, formState: { isValid } } = useForm({
+		mode: 'onChange',
 		defaultValues: {
 			text: selectedText || '',
 			url: '',
@@ -38,6 +38,7 @@ const AddLinkComposerActionModal = ({ selectedText, onClose, onConfirm }: AddLin
 			variant='warning'
 			icon={null}
 			confirmText={t('Add')}
+			confirmDisabled={!isValid}
 			onCancel={onClose}
 			wrapperFunction={(props) => <Box is='form' onSubmit={(e) => void submit(e)} {...props} />}
 			title={t('Add_link')}
@@ -52,12 +53,31 @@ const AddLinkComposerActionModal = ({ selectedText, onClose, onConfirm }: AddLin
 				<Field>
 					<FieldLabel htmlFor={urlField}>{t('URL')}</FieldLabel>
 					<FieldRow>
-						<Controller control={control} name='url' render={({ field }) => <TextInput autoComplete='off' id={urlField} {...field} />} />
+						<Controller control={control} name='url' rules={{ validate: isValidUrl }} render={({ field }) => <TextInput autoComplete='off' id={urlField} {...field} />} />
 					</FieldRow>
 				</Field>
 			</FieldGroup>
 		</GenericModal>
 	);
+};
+
+const isValidUrl = (value: string): boolean => {
+	const url = value.trim();
+
+	if (!url) {
+		return false;
+	}
+
+	if (/^(javascript|data|vbscript):/i.test(url)) {
+		return false;
+	}
+
+	try {
+		new URL(/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(url) ? url : `//${url}`);
+		return true;
+	} catch {
+		return false;
+	}
 };
 
 export default AddLinkComposerActionModal;
