@@ -108,6 +108,10 @@ declare module '@rocket.chat/ui-contexts' {
 			pathname: '/admin/ABAC';
 			pattern: '/admin/ABAC/:tab?/:context?/:id?';
 		};
+		'admin-jobs': {
+			pathname: '/admin/jobs';
+			pattern: '/admin/jobs/:context?/:id?';
+		};
 	}
 }
 
@@ -245,4 +249,9 @@ registerAdminRoute('/feature-preview', {
 registerAdminRoute('/ABAC/:tab?/:context?/:id?', {
 	name: 'admin-ABAC',
 	component: lazy(() => import('./ABAC/AdminABACRoute')),
+});
+
+registerAdminRoute('/jobs/:context?/:id?', {
+	name: 'admin-jobs',
+	component: lazy(() => import('./cronJobs/CronJobsRoute')),
 });

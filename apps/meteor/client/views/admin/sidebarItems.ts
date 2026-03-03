@@ -132,6 +132,12 @@ export const {
 		permissionGranted: (): boolean => hasPermission('manage-emoji'),
 	},
 	{
+		href: '/admin/jobs' as any,
+		i18nLabel: 'Background Jobs',
+		icon: 'history',
+		permissionGranted: (): boolean => hasPermission('view-statistics'),
+	},
+	{
 		href: '/admin/feature-preview',
 		i18nLabel: 'Feature_preview',
 		icon: 'flask',
