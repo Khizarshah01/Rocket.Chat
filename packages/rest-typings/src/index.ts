@@ -8,6 +8,7 @@ import type { AuthEndpoints } from './v1/auth';
 import type { AutoTranslateEndpoints } from './v1/autoTranslate';
 import type { BannersEndpoints } from './v1/banners';
 import type { CalendarEndpoints } from './v1/calendar';
+import type { CronEndpoints } from './v1/cron';
 import type { ChannelsEndpoints } from './v1/channels';
 import type { ChatEndpoints } from './v1/chat';
 import type { CloudEndpoints } from './v1/cloud';
@@ -47,50 +48,51 @@ import type { VideoConferenceEndpoints } from './v1/videoConference';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export interface Endpoints
 	extends ChannelsEndpoints,
-		MeEndpoints,
-		ModerationEndpoints,
-		BannersEndpoints,
-		ChatEndpoints,
-		CommandsEndpoints,
-		CloudEndpoints,
-		CommandsEndpoints,
-		CustomUserStatusEndpoints,
-		DmEndpoints,
-		DirectoryEndpoint,
-		EmojiCustomEndpoints,
-		GroupsEndpoints,
-		ImEndpoints,
-		LDAPEndpoints,
-		RoomsEndpoints,
-		PushEndpoints,
-		RolesEndpoints,
-		TeamsEndpoints,
-		SettingsEndpoints,
-		UsersEndpoints,
-		AppsEndpoints,
-		OmnichannelEndpoints,
-		StatisticsEndpoints,
-		LicensesEndpoints,
-		MiscEndpoints,
-		PresenceEndpoints,
-		InstancesEndpoints,
-		IntegrationsEndpoints,
-		IntegrationHooksEndpoints,
-		VideoConferenceEndpoints,
-		InvitesEndpoints,
-		E2eEndpoints,
-		AssetsEndpoints,
-		EmailInboxEndpoints,
-		MailerEndpoints,
-		SubscriptionsEndpoints,
-		AutoTranslateEndpoints,
-		ImportEndpoints,
-		FederationEndpoints,
-		CalendarEndpoints,
-		AuthEndpoints,
-		ImportEndpoints,
-		ServerEventsEndpoints,
-		DefaultEndpoints {}
+	MeEndpoints,
+	ModerationEndpoints,
+	BannersEndpoints,
+	ChatEndpoints,
+	CommandsEndpoints,
+	CloudEndpoints,
+	CommandsEndpoints,
+	CustomUserStatusEndpoints,
+	DmEndpoints,
+	DirectoryEndpoint,
+	EmojiCustomEndpoints,
+	GroupsEndpoints,
+	ImEndpoints,
+	LDAPEndpoints,
+	RoomsEndpoints,
+	PushEndpoints,
+	RolesEndpoints,
+	TeamsEndpoints,
+	SettingsEndpoints,
+	UsersEndpoints,
+	AppsEndpoints,
+	OmnichannelEndpoints,
+	StatisticsEndpoints,
+	LicensesEndpoints,
+	MiscEndpoints,
+	PresenceEndpoints,
+	InstancesEndpoints,
+	IntegrationsEndpoints,
+	IntegrationHooksEndpoints,
+	VideoConferenceEndpoints,
+	InvitesEndpoints,
+	E2eEndpoints,
+	AssetsEndpoints,
+	EmailInboxEndpoints,
+	MailerEndpoints,
+	SubscriptionsEndpoints,
+	AutoTranslateEndpoints,
+	ImportEndpoints,
+	FederationEndpoints,
+	CalendarEndpoints,
+	AuthEndpoints,
+	ImportEndpoints,
+	ServerEventsEndpoints,
+	CronEndpoints,
+	DefaultEndpoints { }
 
 type OperationsByPathPatternAndMethod<
 	TEndpoints extends Endpoints,
@@ -98,13 +100,13 @@ type OperationsByPathPatternAndMethod<
 	TMethod extends KeyOfEach<TEndpoints[TPathPattern]> = KeyOfEach<TEndpoints[TPathPattern]>,
 > = TMethod extends any
 	? {
-			pathPattern: TPathPattern;
-			method: TMethod;
-			fn: TEndpoints[TPathPattern][TMethod];
-			path: ReplacePlaceholders<TPathPattern extends string ? TPathPattern : never>;
-			params: GetParams<TEndpoints[TPathPattern][TMethod]>;
-			result: GetResult<TEndpoints[TPathPattern][TMethod]>;
-		}
+		pathPattern: TPathPattern;
+		method: TMethod;
+		fn: TEndpoints[TPathPattern][TMethod];
+		path: ReplacePlaceholders<TPathPattern extends string ? TPathPattern : never>;
+		params: GetParams<TEndpoints[TPathPattern][TMethod]>;
+		result: GetResult<TEndpoints[TPathPattern][TMethod]>;
+	}
 	: never;
 
 type OperationsByPathPattern<TEndpoints extends Endpoints, TPathPattern extends keyof TEndpoints> = TPathPattern extends any
@@ -129,10 +131,10 @@ type MethodToPathWithParamsMap = {
 
 type MethodToPathWithoutParamsMap = {
 	[TOperation in Operations as Parameters<TOperation['fn']> extends { length: 0 }
-		? TOperation['method']
-		: undefined extends Parameters<TOperation['fn']>[0]
-			? TOperation['method']
-			: never]: TOperation['path'];
+	? TOperation['method']
+	: undefined extends Parameters<TOperation['fn']>[0]
+	? TOperation['method']
+	: never]: TOperation['path'];
 };
 
 export type PathFor<TMethod extends Method> = MethodToPathMap[TMethod];
@@ -148,24 +150,24 @@ export type PathWithoutParamsFor<TMethod extends Method> = MethodToPathWithoutPa
 type MethodToPathPatternToParamsMap = {
 	[TMethod in Method]: {
 		[TPathPattern in keyof Endpoints]: TMethod extends keyof Endpoints[TPathPattern]
-			? Endpoints[TPathPattern][TMethod] extends infer TOperation
-				? TOperation extends (...args: any) => any
-					? Parameters<TOperation>[0]
-					: never
-				: never
-			: never;
+		? Endpoints[TPathPattern][TMethod] extends infer TOperation
+		? TOperation extends (...args: any) => any
+		? Parameters<TOperation>[0]
+		: never
+		: never
+		: never;
 	};
 };
 
 type MethodToPathPatternToResultMap = {
 	[TMethod in Method]: {
 		[TPathPattern in keyof Endpoints]: TMethod extends keyof Endpoints[TPathPattern]
-			? Endpoints[TPathPattern][TMethod] extends infer TOperation
-				? TOperation extends (...args: any) => any
-					? ReturnType<TOperation>
-					: never
-				: never
-			: never;
+		? Endpoints[TPathPattern][TMethod] extends infer TOperation
+		? TOperation extends (...args: any) => any
+		? ReturnType<TOperation>
+		: never
+		: never
+		: never;
 	};
 };
 
@@ -195,10 +197,10 @@ export type OperationResult<TMethod extends Method, TPathPattern extends PathPat
 export type UrlParams<T extends string> = string extends T
 	? Record<string, string>
 	: T extends `${string}:${infer Param}/${infer Rest}`
-		? { [k in Param | keyof UrlParams<Rest>]: string }
-		: T extends `${string}:${infer Param}`
-			? { [k in Param]: string }
-			: undefined | Record<string, never>;
+	? { [k in Param | keyof UrlParams<Rest>]: string }
+	: T extends `${string}:${infer Param}`
+	? { [k in Param]: string }
+	: undefined | Record<string, never>;
 
 export type MethodOf<TPathPattern extends PathPattern> = TPathPattern extends any ? keyof Endpoints[TPathPattern] : never;
 
@@ -255,6 +257,7 @@ export * from './v1/chat';
 export * from './v1/auth';
 export * from './v1/cloud';
 export * from './v1/banners';
+export * from './v1/cron';
 export * from './default';
 
 // Export the ajv instance for use in other packages
